@@ -16,6 +16,7 @@ const TWITTER_DATE_FORMAT = 'ddd MMM DD HH:mm:ss ZZ YYYY', // date provided in t
 const Twitter = require('twitter'),
     Spotify = require('node-spotify-api'),
     util = require('util'),
+    inquirer = require('inquirer'),
     request = require('request'),
     moment = require('moment'),
     fs = require('fs'),
@@ -26,9 +27,45 @@ var keys = require('./keys.js'),
     spotify = new Spotify(keys.spotify),
     client = new Twitter(keys.twitter)
 
-// user input
-var userCommand = process.argv[2],
-    userParameter = process.argv.slice(3).join(' ')
+
+inquirer.prompt(
+    [
+        {
+            type: 'list',
+            message: 'What would you like to do?',
+            choices: ['my-tweets', 'spotify-this-song', 'movie-this', 'do-what-it-says'],
+            name: 'command'
+        }
+    ]
+).then(commandResponse => {
+    console.log(commandResponse.command)
+    let inputCommand = commandResponse.command,
+        inputParameter
+
+    switch (inputCommand) {
+        case 'spotify-this-song':
+        case 'movie-this':
+            let prompt = {
+                type: 'input',
+                name: 'parameter'
+            }
+
+            prompt.message = inputCommand == 'spotify-this-song' ? 'Enter a song name:' : 'Enter a movie name'
+
+            inquirer.prompt(
+                [
+                    prompt
+                ]
+            ).then(parameterResponse => {
+                processCommand(inputCommand, parameterResponse.parameter)
+            })
+            break
+        case 'my-tweets':
+        case 'do-what-it-says':
+        default:
+            processCommand(inputCommand)
+    }
+})
 
 /**
  * Process command with optional parameter
@@ -143,6 +180,3 @@ function log(...rest) {
     console.log.apply(null, [rest])
     fs.appendFileSync('log.txt', rest + '\n')
 }
-
-// process command specified by user input
-processCommand(userCommand, userParameter)
