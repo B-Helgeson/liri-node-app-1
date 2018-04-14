@@ -4,14 +4,14 @@ All retrieved data is displayed in the console and stored in `log.txt`
 
 ## Accepted Commands
 <dl>
-    <dt>`my-tweets`</dt>
+    <dt><code>my-tweets</code></dt>
     <dd>displays most recent 20 tweets posted to @bootcamp_marce account</dd>
-    <dt>`spotify-this-song [song name]`</dt>
-    <dd>displays Spotify information about `[song name]`</dd>
-    <dt>`movie-this [movie name]`</dt>
-    <dd>displays OMDB information about `[movie name]`</dd>
-    <dt>`do-what-it-says`</dt>
-    <dd>performs the command specified in `random.txt`</dd>
+    <dt><code>spotify-this-song [song name]</code></dt>
+    <dd>displays Spotify information about <code>[song name]</code></dd>
+    <dt><code>movie-this [movie name]</code></dt>
+    <dd>displays OMDB information about <code>[movie name]</code></dd>
+    <dt><code>do-what-it-says</code></dt>
+    <dd>performs the command specified in <code>random.txt</code></dd>
 </dl>
 
 ## Tech Stack
