@@ -9,7 +9,8 @@ const TWITTER_DATE_FORMAT = 'ddd MMM DD HH:mm:ss ZZ YYYY', // date provided in t
     MOVIE_QUERY_FORMAT = 'http://www.omdbapi.com/?t=%s&y=&plot=short&apikey=trilogy',
     DEFAULT_MOVIE = 'Mr. Nobody',
     MOVIE_FORMAT = '"%s" (%s)\nIMDB Rating: %s\nTomatometer: %s\nCountry: %s\nLanguage: %s\n\n%s\n\nStarring: %s',
-    SEPARATOR = '**********'
+    WRAP_WIDTH = 72,
+    SEPARATOR = '*'.repeat(WRAP_WIDTH)
 
 // modules
 const Twitter = require('twitter'),
@@ -17,7 +18,8 @@ const Twitter = require('twitter'),
     util = require('util'),
     request = require('request'),
     moment = require('moment'),
-    fs = require('fs')
+    fs = require('fs'),
+    wrap = require('word-wrap')
 
 // init
 var keys = require('./keys.js'),
@@ -26,7 +28,7 @@ var keys = require('./keys.js'),
 
 // user input
 var userCommand = process.argv[2],
-    userParameter = process.argv.slice(3).join(" ")
+    userParameter = process.argv.slice(3).join(' ')
 
 /**
  * Process command with optional parameter
@@ -136,9 +138,10 @@ function performTaskFromFile() {
  * Log to console and to file
  */
 function log(...rest) {
-    console.log.apply(null, rest)
+    rest = wrap(rest.join(' '), { width: WRAP_WIDTH })
 
-    fs.appendFileSync('log.txt', rest.join(' ')+'\n')
+    console.log.apply(null, [rest])
+    fs.appendFileSync('log.txt', rest + '\n')
 }
 
 // process command specified by user input
