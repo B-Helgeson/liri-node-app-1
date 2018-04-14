@@ -34,6 +34,7 @@ var userCommand = process.argv[2],
  * @param {string} parameter (optional) 
  */
 function processCommand(command, parameter) {
+    log(util.format('Processing %s command', command))
     switch (command) {
         case 'my-tweets':
             displayTweets()
@@ -48,7 +49,7 @@ function processCommand(command, parameter) {
             performTaskFromFile()
             break
         default:
-            console.log('Unsupported command', command)
+            log('Unsupported command', command)
     }
 }
 
@@ -60,11 +61,11 @@ function displayTweets() {
         function (error, tweets, response) {
             if (!error) {
                 tweets.forEach(tweet => {
-                    console.log(SEPARATOR)
-                    console.log(tweet.text)
-                    console.log('Tweeted on', moment(tweet.created_at, TWITTER_DATE_FORMAT).format(OUTPUT_DATE_FORMAT))
+                    log(SEPARATOR)
+                    log(tweet.text)
+                    log('Tweeted on', moment(tweet.created_at, TWITTER_DATE_FORMAT).format(OUTPUT_DATE_FORMAT))
                 })
-                console.log(SEPARATOR)
+                log(SEPARATOR)
             }
         }
     )
@@ -78,19 +79,19 @@ function spotifySong(songName) {
     spotify.search({ type: 'track', query: songName, limit: 1 },
         function (error, data) {
             if (error) {
-                return console.log('Error occurred: ' + error)
+                return log('Error occurred: ' + error)
             }
 
             let track = data.tracks.items[0]
 
-            console.log(SEPARATOR)
-            console.log(util.format(TRACK_FORMAT,
+            log(SEPARATOR)
+            log(util.format(TRACK_FORMAT,
                 track.name,
                 track.artists.map(artist => artist.name).join(', '),
                 track.album.name,
                 track.external_urls.preview_url || ('No preview available. Full track URL: ' + track.external_urls.spotify))
             )
-            console.log(SEPARATOR)
+            log(SEPARATOR)
         }
     )
 }
@@ -105,8 +106,8 @@ function omdbMovie(movieName) {
             if (!error && response.statusCode === 200) {
                 let movie = JSON.parse(data)
 
-                console.log(SEPARATOR)
-                console.log(util.format(MOVIE_FORMAT,
+                log(SEPARATOR)
+                log(util.format(MOVIE_FORMAT,
                     movie.Title,
                     movie.Year,
                     movie.Ratings.find(rating => { return rating.Source === 'Internet Movie Database' }).Value,
@@ -116,7 +117,7 @@ function omdbMovie(movieName) {
                     movie.Plot,
                     movie.Actors)
                 )
-                console.log(SEPARATOR)
+                log(SEPARATOR)
             }
         }
     )
@@ -129,6 +130,15 @@ function performTaskFromFile() {
     let fileCommand, fileParameter
     [fileCommand, fileParameter] = fs.readFileSync('random.txt', 'utf8').split(',')
     processCommand(fileCommand, fileParameter)
+}
+
+/**
+ * Log to console and to file
+ */
+function log(...rest) {
+    console.log.apply(null, rest)
+
+    fs.appendFileSync('log.txt', rest.join(' ')+'\n')
 }
 
 // process command specified by user input
