@@ -20,7 +20,7 @@ var command = process.argv[2],
 const TWITTER_DATE_FORMAT = 'ddd MMM DD HH:mm:ss ZZ YYYY', //date provided in the format of Thu Apr 12 22:29:39 +0000 2018
     OUTPUT_DATE_FORMAT = 'dddd, MMMM Do YYYY [at] h:mm A',
     DEFAULT_SONG = 'Ace of Base The Sign',
-    TRACK_FORMAT = '"%s" by %s on the album "%s"',
+    TRACK_FORMAT = '"%s" by %s on the album "%s"\n\n%s',
     MOVIE_QUERY_FORMAT = 'http://www.omdbapi.com/?t=%s&y=&plot=short&apikey=trilogy',
     DEFAULT_MOVIE = 'Mr. Nobody',
     MOVIE_FORMAT = '"%s" (%s)\nIMDB Rating: %s\nTomatometer: %s\nCountry: %s\nLanguage: %s\n\n%s\n\nStarring: %s',
@@ -71,8 +71,12 @@ function spotifySong(songName) {
             let track = data.tracks.items[0]
 
             console.log(SEPARATOR)
-            console.log(util.format(TRACK_FORMAT, track.name, track.artists.map(artist => artist.name).join(', '), track.album.name))
-            console.log(track.external_urls.preview_url || ('No preview available; song URL: ' + track.external_urls.spotify))
+            console.log(util.format(TRACK_FORMAT,
+                track.name,
+                track.artists.map(artist => artist.name).join(', '),
+                track.album.name,
+                track.external_urls.preview_url || ('No preview available; song URL: ' + track.external_urls.spotify))
+            )
             console.log(SEPARATOR)
         }
     );
@@ -93,7 +97,8 @@ function omdbMovie(movieName) {
                     movie.Country,
                     movie.Language,
                     movie.Plot,
-                    movie.Actors))
+                    movie.Actors)
+                )
                 console.log(SEPARATOR)
             }
         }
