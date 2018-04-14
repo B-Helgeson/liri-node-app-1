@@ -5,7 +5,8 @@ const Twitter = require('twitter'),
     Spotify = require('node-spotify-api'),
     util = require('util'),
     request = require('request'),
-    moment = require('moment')
+    moment = require('moment'),
+    fs = require('fs')
 
 // init
 var keys = require('./keys.js'),
@@ -13,8 +14,8 @@ var keys = require('./keys.js'),
     client = new Twitter(keys.twitter)
 
 // user input
-var command = process.argv[2],
-    parameter = process.argv.slice(3).join(" ")
+var userCommand = process.argv[2],
+    userParameter = process.argv.slice(3).join(" ")
 
 // consts
 const TWITTER_DATE_FORMAT = 'ddd MMM DD HH:mm:ss ZZ YYYY', //date provided in the format of Thu Apr 12 22:29:39 +0000 2018
@@ -26,24 +27,25 @@ const TWITTER_DATE_FORMAT = 'ddd MMM DD HH:mm:ss ZZ YYYY', //date provided in th
     MOVIE_FORMAT = '"%s" (%s)\nIMDB Rating: %s\nTomatometer: %s\nCountry: %s\nLanguage: %s\n\n%s\n\nStarring: %s',
     SEPARATOR = '**********'
 
-/* TODO Commands
-movie-this
+processCommand(userCommand, userParameter)
 
-do-what-it-says
-*/
-
-switch (command) {
-    case 'my-tweets':
-        displayTweets()
-        break
-    case 'spotify-this-song':
-        spotifySong(parameter || DEFAULT_SONG)
-        break
-    case 'movie-this':
-        omdbMovie(parameter || DEFAULT_MOVIE)
-        break
-    default:
-        console.log('Unsupported command', command)
+function processCommand(command, parameter) {
+    switch (command) {
+        case 'my-tweets':
+            displayTweets()
+            break
+        case 'spotify-this-song':
+            spotifySong(parameter || DEFAULT_SONG)
+            break
+        case 'movie-this':
+            omdbMovie(parameter || DEFAULT_MOVIE)
+            break
+        case 'do-what-it-says':
+            performTaskFromFile()
+            break
+        default:
+            console.log('Unsupported command', command)
+    }
 }
 
 function displayTweets() {
@@ -54,7 +56,7 @@ function displayTweets() {
                     console.log(SEPARATOR)
                     console.log(tweet.text)
                     console.log('Tweeted on', moment(tweet.created_at, TWITTER_DATE_FORMAT).format(OUTPUT_DATE_FORMAT))
-                });
+                })
                 console.log(SEPARATOR)
             }
         }
@@ -65,7 +67,7 @@ function spotifySong(songName) {
     spotify.search({ type: 'track', query: songName, limit: 1 },
         function (err, data) {
             if (err) {
-                return console.log('Error occurred: ' + err);
+                return console.log('Error occurred: ' + err)
             }
 
             let track = data.tracks.items[0]
@@ -79,7 +81,7 @@ function spotifySong(songName) {
             )
             console.log(SEPARATOR)
         }
-    );
+    )
 }
 
 function omdbMovie(movieName) {
@@ -103,4 +105,9 @@ function omdbMovie(movieName) {
             }
         }
     )
+}
+
+function performTaskFromFile() {
+    [fileCommand, fileParameter] = fs.readFileSync('random.txt', 'utf8').split(',')
+    processCommand(fileCommand, fileParameter)
 }
