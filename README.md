@@ -14,6 +14,8 @@ All retrieved data is displayed in the console and stored in `log.txt`
     <dd>performs the command specified in <code>random.txt</code></dd>
 </dl>
 
+If no command is provided, Inquirer package is used to prompt the user.
+
 ## Tech Stack
 - Node.js
 
@@ -21,6 +23,7 @@ All retrieved data is displayed in the console and stored in `log.txt`
 ```js
 {
     "dotenv": "^5.0.1",
+    "inquirer": "^5.2.0",
     "moment": "^2.22.0",
     "node-spotify-api": "^1.0.7",
     "request": "^2.85.0",
@@ -28,3 +31,6 @@ All retrieved data is displayed in the console and stored in `log.txt`
     "word-wrap": "^1.2.3"
 }
 ```
+
+## Demo
+<script src="https://asciinema.org/a/RoiVunLqZvceGH76BtfNtwZyb.js" id="asciicast-RoiVunLqZvceGH76BtfNtwZyb" async></script>

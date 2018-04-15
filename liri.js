@@ -27,45 +27,13 @@ var keys = require('./keys.js'),
     spotify = new Spotify(keys.spotify),
     client = new Twitter(keys.twitter)
 
+// input
+const argCommand = process.argv[2],
+    argParameter = process.argv.slice(3)
 
-inquirer.prompt(
-    [
-        {
-            type: 'list',
-            message: 'What would you like to do?',
-            choices: ['my-tweets', 'spotify-this-song', 'movie-this', 'do-what-it-says'],
-            name: 'command'
-        }
-    ]
-).then(commandResponse => {
-    console.log(commandResponse.command)
-    let inputCommand = commandResponse.command,
-        inputParameter
+// process arguments
+processCommand(argCommand, argParameter)
 
-    switch (inputCommand) {
-        case 'spotify-this-song':
-        case 'movie-this':
-            let prompt = {
-                type: 'input',
-                name: 'parameter'
-            }
-
-            prompt.message = inputCommand == 'spotify-this-song' ? 'Enter a song name:' : 'Enter a movie name'
-
-            inquirer.prompt(
-                [
-                    prompt
-                ]
-            ).then(parameterResponse => {
-                processCommand(inputCommand, parameterResponse.parameter)
-            })
-            break
-        case 'my-tweets':
-        case 'do-what-it-says':
-        default:
-            processCommand(inputCommand)
-    }
-})
 
 /**
  * Process command with optional parameter
@@ -73,7 +41,10 @@ inquirer.prompt(
  * @param {string} parameter (optional) 
  */
 function processCommand(command, parameter) {
-    log(util.format('Processing %s command', command))
+    if (command) {
+        log('Processing %s command', command)
+    }
+
     switch (command) {
         case 'my-tweets':
             displayTweets()
@@ -88,8 +59,57 @@ function processCommand(command, parameter) {
             performTaskFromFile()
             break
         default:
-            log('Unsupported command', command)
+            // if no (or an invalid) command is entered, use Inquirer to prompt for a command
+            promptForCommand()
     }
+}
+
+/**
+ * Use Inquirer to present available commands
+ */
+function promptForCommand() {
+    inquirer.prompt(
+        [
+            {
+                type: 'list',
+                message: 'What would you like to do?',
+                choices: [
+                    { name: 'View my tweets', value: 'my-tweets' },
+                    { name: 'Find song on Spotify', value: 'spotify-this-song' },
+                    { name: 'Get movie information', value: 'movie-this' },
+                    { name: 'Perform task from file', value: 'do-what-it-says' }
+                ],
+                name: 'command'
+            }
+        ]
+    ).then(commandResponse => {
+        console.log(commandResponse.command)
+        let inputCommand = commandResponse.command
+
+        switch (inputCommand) {
+            case 'spotify-this-song':
+            case 'movie-this':
+                let prompt = {
+                    type: 'input',
+                    name: 'parameter'
+                }
+
+                prompt.message = inputCommand == 'spotify-this-song' ? 'Enter a song name:' : 'Enter a movie name'
+
+                inquirer.prompt(
+                    [
+                        prompt
+                    ]
+                ).then(parameterResponse => {
+                    processCommand(inputCommand, parameterResponse.parameter)
+                })
+                break
+            case 'my-tweets':
+            case 'do-what-it-says':
+            default:
+                processCommand(inputCommand)
+        }
+    })
 }
 
 /**
@@ -120,15 +140,17 @@ function spotifySong(songName) {
             if (error) {
                 return log('Error occurred: ' + error)
             }
-
             let track = data.tracks.items[0]
+            if (!track) {
+                return log('Could not find song')
+            }
 
             log(SEPARATOR)
-            log(util.format(TRACK_FORMAT,
+            log(TRACK_FORMAT,
                 track.name,
                 track.artists.map(artist => artist.name).join(', '),
                 track.album.name,
-                track.external_urls.preview_url || ('No preview available. Full track URL: ' + track.external_urls.spotify))
+                track.external_urls.preview_url || ('No preview available. Full track URL: ' + track.external_urls.spotify)
             )
             log(SEPARATOR)
         }
@@ -140,13 +162,13 @@ function spotifySong(songName) {
  * @param {string} movieName 
  */
 function omdbMovie(movieName) {
-    request(util.format(MOVIE_QUERY_FORMAT, movieName.replace(' ', '+')),
+    request(MOVIE_QUERY_FORMAT, movieName.replace(' ', '+'),
         function (error, response, data) {
             if (!error && response.statusCode === 200) {
                 let movie = JSON.parse(data)
 
                 log(SEPARATOR)
-                log(util.format(MOVIE_FORMAT,
+                log(MOVIE_FORMAT,
                     movie.Title,
                     movie.Year,
                     movie.Ratings.find(rating => { return rating.Source === 'Internet Movie Database' }).Value,
@@ -154,9 +176,12 @@ function omdbMovie(movieName) {
                     movie.Country,
                     movie.Language,
                     movie.Plot,
-                    movie.Actors)
+                    movie.Actors
                 )
                 log(SEPARATOR)
+            }
+            else {
+                log('Could not find movie')
             }
         }
     )
@@ -175,8 +200,8 @@ function performTaskFromFile() {
  * Log to console and to file
  */
 function log(...rest) {
-    rest = wrap(rest.join(' '), { width: WRAP_WIDTH })
+    var logStr = wrap(util.format.apply(null, rest), { width: WRAP_WIDTH });
 
-    console.log.apply(null, [rest])
-    fs.appendFileSync('log.txt', rest + '\n')
+    console.log(logStr)
+    fs.appendFileSync('log.txt', logStr + '\n')
 }
