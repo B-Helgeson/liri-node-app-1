@@ -2,6 +2,8 @@ Language Interpretation and Recognition Interface
 
 All retrieved data is displayed in the console and stored in `log.txt`
 
+<a href="https://github.com/merrazquin/liri-node-app">Source code</a>
+
 ## Accepted Commands
 <dl>
     <dt><code>my-tweets</code></dt>
@@ -35,3 +37,4 @@ If no command is provided, Inquirer package is used to prompt the user.
 
 ## Demo
 <script data-rows="20" src="https://asciinema.org/a/NbcTBW9W12ZDlVuJRExHx98WF.js" id="asciicast-NbcTBW9W12ZDlVuJRExHx98WF" async></script>
+<a href="https://asciinema.org/a/NbcTBW9W12ZDlVuJRExHx98WF?rows=30" target="_blank">demo link</a>
