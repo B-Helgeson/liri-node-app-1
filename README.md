@@ -34,4 +34,4 @@ If no command is provided, Inquirer package is used to prompt the user.
 ```
 
 ## Demo
-<script src="https://asciinema.org/a/NbcTBW9W12ZDlVuJRExHx98WF.js" id="asciicast-NbcTBW9W12ZDlVuJRExHx98WF" async></script>
+<script data-rows="20" src="https://asciinema.org/a/NbcTBW9W12ZDlVuJRExHx98WF.js" id="asciicast-NbcTBW9W12ZDlVuJRExHx98WF" async></script>
