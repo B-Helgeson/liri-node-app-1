@@ -23,6 +23,7 @@ If no command is provided, Inquirer package is used to prompt the user.
 ```js
 {
     "dotenv": "^5.0.1",
+    "colors": "^1.2.1",
     "inquirer": "^5.2.0",
     "moment": "^2.22.0",
     "node-spotify-api": "^1.0.7",
@@ -33,4 +34,4 @@ If no command is provided, Inquirer package is used to prompt the user.
 ```
 
 ## Demo
-<script src="https://asciinema.org/a/MkfyM2CkatvimMM4MPQNUKlXD.js" id="asciicast-MkfyM2CkatvimMM4MPQNUKlXD" data-theme="monokai" async></script>
+<script src="https://asciinema.org/a/NbcTBW9W12ZDlVuJRExHx98WF.js" id="asciicast-NbcTBW9W12ZDlVuJRExHx98WF" async></script>

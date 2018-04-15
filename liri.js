@@ -1,17 +1,5 @@
 require('dotenv').config()
 
-// consts
-const TWITTER_DATE_FORMAT = 'ddd MMM DD HH:mm:ss ZZ YYYY', // date provided in the format of Thu Apr 12 22:29:39 +0000 2018
-    OUTPUT_DATE_FORMAT = 'dddd, MMMM Do YYYY [at] h:mm A', // date displayed in the format of Thursday, April 12th 2018 at 6:29 PM
-    TWEET_PARAMS = { screen_name: 'bootcamp_marce', count: 20 },
-    DEFAULT_SONG = 'Ace of Base The Sign',
-    TRACK_FORMAT = '"%s" by %s on the album "%s"\n\n%s',
-    MOVIE_QUERY_FORMAT = 'http://www.omdbapi.com/?t=%s&y=&plot=short&apikey=trilogy',
-    DEFAULT_MOVIE = 'Mr. Nobody',
-    MOVIE_FORMAT = '"%s" (%s)\nIMDB Rating: %s\nTomatometer: %s\nCountry: %s\nLanguage: %s\n\n%s\n\nStarring: %s',
-    WRAP_WIDTH = 72,
-    SEPARATOR = '*'.repeat(WRAP_WIDTH)
-
 // modules
 const Twitter = require('twitter'),
     Spotify = require('node-spotify-api'),
@@ -20,7 +8,21 @@ const Twitter = require('twitter'),
     request = require('request'),
     moment = require('moment'),
     fs = require('fs'),
-    wrap = require('word-wrap')
+    wrap = require('word-wrap'),
+    colors = require('colors')
+
+// consts
+const TWITTER_DATE_FORMAT = 'ddd MMM DD HH:mm:ss ZZ YYYY', // date provided in the format of Thu Apr 12 22:29:39 +0000 2018
+    OUTPUT_DATE_FORMAT = 'dddd, MMMM Do YYYY [at] h:mm A', // date displayed in the format of Thursday, April 12th 2018 at 6:29 PM
+    TWEET_PARAMS = { screen_name: 'bootcamp_marce', count: 20 },
+    DEFAULT_SONG = 'Ace of Base The Sign',
+    TRACK_FORMAT = '"%s"'.bold.yellow +' by '.dim + '%s'.bold.yellow + ' on the album '.dim + '"%s"'.bold.yellow + '\n\n%s'.cyan,
+    MOVIE_QUERY_FORMAT = 'http://www.omdbapi.com/?t=%s&y=&plot=short&apikey=trilogy',
+    DEFAULT_MOVIE = 'Mr. Nobody',
+    MOVIE_FORMAT = '"%s" '.bold.yellow + '(%s)'.dim + '\nIMDB Rating: '.bold + '%s\n' + 'Tomatometer: '.bold + '%s\n' + 'Country: '.bold +
+        '%s\n' + 'Language: '.bold + '%s\n\n' + '%s\n\n'.yellow +'Starring: '.bold + '%s',
+    WRAP_WIDTH = 72,
+    SEPARATOR = '*'.repeat(WRAP_WIDTH).green
 
 // init
 var keys = require('./keys.js'),
@@ -142,8 +144,8 @@ function displayTweets() {
             if (!error) {
                 tweets.forEach(tweet => {
                     log(SEPARATOR)
-                    log(tweet.text)
-                    log('Tweeted on', moment(tweet.created_at, TWITTER_DATE_FORMAT).format(OUTPUT_DATE_FORMAT))
+                    log(tweet.text.cyan)
+                    log('Tweeted on %s'.dim, moment(tweet.created_at, TWITTER_DATE_FORMAT).format(OUTPUT_DATE_FORMAT))
                 })
                 log(SEPARATOR)
             }
