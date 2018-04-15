@@ -34,7 +34,6 @@ const argCommand = process.argv[2],
 // process arguments
 processCommand(argCommand, argParameter)
 
-
 /**
  * Process command with optional parameter
  * @param {string} command (required) Supported commands: my-tweets, spotify-this-song, movie-this, do-what-it-says
@@ -77,7 +76,8 @@ function promptForCommand() {
                     { name: 'View my tweets', value: 'my-tweets' },
                     { name: 'Find song on Spotify', value: 'spotify-this-song' },
                     { name: 'Get movie information', value: 'movie-this' },
-                    { name: 'Perform task from file', value: 'do-what-it-says' }
+                    { name: 'Perform task from file', value: 'do-what-it-says' },
+                    'exit'
                 ],
                 name: 'command'
             }
@@ -104,10 +104,31 @@ function promptForCommand() {
                     processCommand(inputCommand, parameterResponse.parameter)
                 })
                 break
+            case 'exit':
+                break
             case 'my-tweets':
             case 'do-what-it-says':
             default:
                 processCommand(inputCommand)
+        }
+    })
+}
+
+/**
+ * Use Inquirer to prompt user to continue
+ */
+function promptToContinue() {
+    inquirer.prompt(
+        [
+            {
+                type: 'confirm',
+                message: 'Would you like to continue?',
+                name: 'continue'
+            }
+        ]
+    ).then(confirmation => {
+        if (confirmation.continue) {
+            promptForCommand()
         }
     })
 }
@@ -126,6 +147,7 @@ function displayTweets() {
                 })
                 log(SEPARATOR)
             }
+            promptToContinue()
         }
     )
 }
@@ -137,22 +159,24 @@ function displayTweets() {
 function spotifySong(songName) {
     spotify.search({ type: 'track', query: songName, limit: 1 },
         function (error, data) {
-            if (error) {
-                return log('Error occurred: ' + error)
+            if (!error) {
+                let track = data.tracks.items[0]
+                if (!track) {
+                    log('Could not find song')
+                } else {
+                    log(SEPARATOR)
+                    log(TRACK_FORMAT,
+                        track.name,
+                        track.artists.map(artist => artist.name).join(', '),
+                        track.album.name,
+                        track.external_urls.preview_url || ('No preview available. Full track URL: ' + track.external_urls.spotify)
+                    )
+                    log(SEPARATOR)
+                }
+            } else {
+                log('Error occurred: ' + error)
             }
-            let track = data.tracks.items[0]
-            if (!track) {
-                return log('Could not find song')
-            }
-
-            log(SEPARATOR)
-            log(TRACK_FORMAT,
-                track.name,
-                track.artists.map(artist => artist.name).join(', '),
-                track.album.name,
-                track.external_urls.preview_url || ('No preview available. Full track URL: ' + track.external_urls.spotify)
-            )
-            log(SEPARATOR)
+            promptToContinue()
         }
     )
 }
@@ -162,7 +186,7 @@ function spotifySong(songName) {
  * @param {string} movieName 
  */
 function omdbMovie(movieName) {
-    request(MOVIE_QUERY_FORMAT, movieName.replace(' ', '+'),
+    request(util.format(MOVIE_QUERY_FORMAT, movieName.replace(' ', '+')),
         function (error, response, data) {
             if (!error && response.statusCode === 200) {
                 let movie = JSON.parse(data)
@@ -179,10 +203,11 @@ function omdbMovie(movieName) {
                     movie.Actors
                 )
                 log(SEPARATOR)
-            }
-            else {
+            } else {
+                log(response.statusCode, error)
                 log('Could not find movie')
             }
+            promptToContinue()
         }
     )
 }
