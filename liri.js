@@ -16,16 +16,16 @@ const TWITTER_DATE_FORMAT = 'ddd MMM DD HH:mm:ss ZZ YYYY', // date provided in t
     OUTPUT_DATE_FORMAT = 'dddd, MMMM Do YYYY [at] h:mm A', // date displayed in the format of Thursday, April 12th 2018 at 6:29 PM
     TWEET_PARAMS = { screen_name: 'bootcamp_marce', count: 20 },
     DEFAULT_SONG = 'Ace of Base The Sign',
-    TRACK_FORMAT = '"%s"'.bold.yellow +' by '.dim + '%s'.bold.yellow + ' on the album '.dim + '"%s"'.bold.yellow + '\n\n%s'.cyan,
+    TRACK_FORMAT = '"%s"'.bold.yellow + ' by '.dim + '%s'.bold.yellow + ' on the album '.dim + '"%s"'.bold.yellow + '\n\n%s'.cyan,
     MOVIE_QUERY_FORMAT = 'http://www.omdbapi.com/?t=%s&y=&plot=short&apikey=trilogy',
     DEFAULT_MOVIE = 'Mr. Nobody',
-    MOVIE_FORMAT = '"%s" '.bold.yellow + '(%s)'.dim + '\nIMDB Rating: '.bold + '%s\n' + 'Tomatometer: '.bold + '%s\n' + 'Country: '.bold +
-        '%s\n' + 'Language: '.bold + '%s\n\n' + '%s\n\n'.yellow +'Starring: '.bold + '%s',
+    MOVIE_FORMAT = '"%s" '.bold.yellow + '(%s)'.dim + '\nIMDB Rating: '.bold + '%s\n' + 'Tomatometer: '.bold + '%s\n' +
+        'Country: '.bold + '%s\n' + 'Language: '.bold + '%s\n\n' + '%s\n\n'.yellow + 'Starring: '.bold + '%s',
     WRAP_WIDTH = 72,
     SEPARATOR = '*'.repeat(WRAP_WIDTH).green
 
 // init
-var keys = require('./keys.js'),
+const keys = require('./keys.js'),
     spotify = new Spotify(keys.spotify),
     client = new Twitter(keys.twitter)
 
@@ -96,8 +96,10 @@ function promptForCommand() {
                     name: 'parameter'
                 }
 
+                // change prompt message depending on the input command
                 prompt.message = inputCommand == 'spotify-this-song' ? 'Enter a song name:' : 'Enter a movie name'
 
+                // prompt user for the parameter
                 inquirer.prompt(
                     [
                         prompt
@@ -108,6 +110,7 @@ function promptForCommand() {
                 break
             case 'exit':
                 break
+            // my-tweets and do-what-i-say don't require a parameter
             case 'my-tweets':
             case 'do-what-it-says':
             default:
@@ -227,7 +230,7 @@ function performTaskFromFile() {
  * Log to console and to file
  */
 function log(...rest) {
-    var logStr = wrap(util.format.apply(null, rest), { width: WRAP_WIDTH });
+    let logStr = wrap(util.format.apply(null, rest), { width: WRAP_WIDTH });
 
     console.log(logStr)
     fs.appendFileSync('log.txt', logStr + '\n')
