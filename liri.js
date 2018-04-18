@@ -70,20 +70,18 @@ function processCommand(command, parameter) {
  */
 function promptForCommand() {
     inquirer.prompt(
-        [
-            {
-                type: 'list',
-                message: 'What would you like to do?',
-                choices: [
-                    { name: 'View my tweets', value: 'my-tweets' },
-                    { name: 'Find song on Spotify', value: 'spotify-this-song' },
-                    { name: 'Get movie information', value: 'movie-this' },
-                    { name: 'Perform task from file', value: 'do-what-it-says' },
-                    'exit'
-                ],
-                name: 'command'
-            }
-        ]
+        {
+            type: 'list',
+            message: 'What would you like to do?',
+            choices: [
+                { name: 'View my tweets', value: 'my-tweets' },
+                { name: 'Find song on Spotify', value: 'spotify-this-song' },
+                { name: 'Get movie information', value: 'movie-this' },
+                { name: 'Perform task from file', value: 'do-what-it-says' },
+                'exit'
+            ],
+            name: 'command'
+        }
     ).then(commandResponse => {
         console.log(commandResponse.command)
         let inputCommand = commandResponse.command
@@ -101,9 +99,7 @@ function promptForCommand() {
 
                 // prompt user for the parameter
                 inquirer.prompt(
-                    [
-                        prompt
-                    ]
+                    prompt
                 ).then(parameterResponse => {
                     processCommand(inputCommand, parameterResponse.parameter)
                 })
@@ -124,13 +120,11 @@ function promptForCommand() {
  */
 function promptToContinue() {
     inquirer.prompt(
-        [
-            {
-                type: 'confirm',
-                message: 'Would you like to continue?',
-                name: 'continue'
-            }
-        ]
+        {
+            type: 'confirm',
+            message: 'Would you like to continue?',
+            name: 'continue'
+        }
     ).then(confirmation => {
         if (confirmation.continue) {
             promptForCommand()
